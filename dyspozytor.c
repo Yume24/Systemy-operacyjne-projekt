@@ -9,12 +9,16 @@ void signal_handler(int signum)
     else if (signum == SIGUSR2)
     {
         printf("Zatrzymywanie pracy\n");
-        remove_message_queue(message_queue_id);
         for (int i = 0; i < 3; i++)
         {
             kill(workers[i], SIGTERM);
         }
+        for (int i = 0; i < NUMBER_OF_TRUCKS; i++)
+        {
+            kill(trucks[i], SIGTERM);
+        }
         while (wait(NULL) > 0);
+        remove_message_queue(message_queue_id);
         exit(0);
     }
 }
@@ -36,7 +40,8 @@ int main()
 
     // Tworzenie pracowników
     create_workers();
-
+    // Tworzenie ciężarówek
+    create_trucks();
     // Oczekiwanie na sygnały
     while (1)
     {

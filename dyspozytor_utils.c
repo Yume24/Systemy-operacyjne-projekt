@@ -47,7 +47,7 @@ void create_workers()
             // Wywołanie execl w if, aby obsłużyć błąd
             if (execl("./pracownik", "pracownik", (char[2]){i + '0', '\0'}, key_str, NULL) == -1)
             {
-                perror("Błąd przy wywołaniu execl");
+                perror("Blad przy wywolaniu execl");
                 exit(EXIT_FAILURE);
             }
             break;
@@ -59,6 +59,35 @@ void create_workers()
 
         default: // Kod rodzica
             printf("Stworzono pracownika %d\n", i);
+            break;
+        }
+    }
+}
+
+void create_trucks()
+{
+    for (int i = 1; i < NUMBER_OF_TRUCKS + 1; i++)
+    {
+        switch (trucks[i] = fork())
+        {
+        case 0: // Kod potomka
+            char key_str[16];
+            sprintf(key_str, "%d", queue_key);
+            // Wywołanie execl w if, aby obsłużyć błąd
+            if (execl("./ciezarowka", "ciezarowka", (char[2]){i + '0', '\0'}, key_str, NULL) == -1)
+            {
+                perror("Blad przy wywolaniu execl");
+                exit(EXIT_FAILURE);
+            }
+            break;
+
+        case -1: // Błąd
+            perror("fork error");
+            exit(EXIT_FAILURE);
+            break;
+
+        default: // Kod rodzica
+            printf("Stworzono ciezarowke %d\n", i);
             break;
         }
     }

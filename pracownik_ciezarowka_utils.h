@@ -7,7 +7,7 @@
 #include <sys/wait.h>
 #include <sys/msg.h>
 #include <sys/ipc.h>
-
+#include <time.h>
 
 struct message
 {
