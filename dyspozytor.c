@@ -1,49 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <sys/wait.h>
-
-#define TRUCK_MAX_LOAD 100
-#define CONVEYOR_MAX_NUMBER 20
-#define CONVEYOR_MAX_LOAD 30
-#define NUMBER_OF_TRUCKS 3
-#define TRUCK_GONE_TIME 5
-
-pid_t workers[3];
-
-void create_workers()
-{
-    for (int i = 0; i < 3; i++)
-    {
-        switch (workers[i] = fork())
-        {
-        case 0: // Kod potomka
-            execl("./pracownik", "pracownik", (char[2]){i + '0', '\0'}, NULL);
-            perror("execl error");
-            exit(EXIT_FAILURE);
-
-        case -1: // Błąd
-            perror("fork error");
-            exit(EXIT_FAILURE);
-
-        default: // Kod rodzica
-            printf("Stworzono pracownika %d\n", i + 1);
-            break;
-        }
-    }
-}
+#include "dyspozytor_utils.h"
 
 void signal_handler(int signum)
 {
     if (signum == SIGUSR1)
     {
-        printf("Sygnał do odjazdu ciężarówki\n");
+        printf("Sygnal do odjazdu ciezarowki\n");
     }
     else if (signum == SIGUSR2)
     {
         printf("Zatrzymywanie pracy\n");
+        remove_message_queue(message_queue_id);
         for (int i = 0; i < 3; i++)
         {
             kill(workers[i], SIGTERM);
@@ -55,9 +21,18 @@ void signal_handler(int signum)
 
 int main()
 {
+    printf("Dyspozytor PID: %d\n", getpid());
+
     // Obsługa sygnałów
     signal(SIGUSR1, signal_handler);
     signal(SIGUSR2, signal_handler);
+
+    if ((queue_key = ftok(".", 0)) == -1) 
+    {
+        perror("Blad generowania klucza");
+        exit(EXIT_FAILURE);
+    }
+    message_queue_id = create_message_queue(queue_key);
 
     // Tworzenie pracowników
     create_workers();
@@ -67,6 +42,6 @@ int main()
     {
         pause(); // Czeka na sygnał
     }
-
+    remove_message_queue(message_queue_id);
     return 0;
 }
