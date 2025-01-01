@@ -40,7 +40,7 @@ void create_workers()
     {
         switch (workers[i] = fork())
         {
-        case 0: // Kod potomka
+        case 0: { // Kod potomka
             char key_str[16];
             sprintf(key_str, "%d", queue_key);
 
@@ -50,7 +50,7 @@ void create_workers()
                 perror("Blad przy wywolaniu execl");
                 exit(EXIT_FAILURE);
             }
-            break;
+            break;}
 
         case -1: // Błąd
             perror("fork error");
@@ -70,7 +70,7 @@ void create_trucks()
     {
         switch (trucks[i] = fork())
         {
-        case 0: // Kod potomka
+        case 0: { // Kod potomka
             char key_str[16];
             sprintf(key_str, "%d", queue_key);
             // Wywołanie execl w if, aby obsłużyć błąd
@@ -79,7 +79,7 @@ void create_trucks()
                 perror("Blad przy wywolaniu execl");
                 exit(EXIT_FAILURE);
             }
-            break;
+            break;}
 
         case -1: // Błąd
             perror("fork error");
