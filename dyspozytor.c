@@ -1,5 +1,5 @@
 #include "dyspozytor_utils.h"
-
+int running = 1;
 void signal_handler(int signum)
 {
     if (signum == SIGUSR1)
@@ -17,9 +17,10 @@ void signal_handler(int signum)
         {
             kill(trucks[i], SIGTERM);
         }
-        while (wait(NULL) > 0);
+        while(wait(NULL) > 0);
+        printf("test\n");
         remove_message_queue(message_queue_id);
-        exit(0);
+        running = 0;
     }
 }
 
@@ -37,16 +38,16 @@ int main()
         exit(EXIT_FAILURE);
     }
     message_queue_id = create_message_queue(queue_key);
-
+    sprintf(queue_key_string, "%d", queue_key);
     // Tworzenie pracowników
     create_workers();
     // Tworzenie ciężarówek
     create_trucks();
     // Oczekiwanie na sygnały
-    while (1)
+    while (running)
     {
-        pause(); // Czeka na sygnał
+        pause();
     }
-    remove_message_queue(message_queue_id);
+
     return 0;
 }

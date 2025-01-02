@@ -1,12 +1,14 @@
 #pragma ONCE
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
+#include <errno.h>
+#include <string.h>
 #include <sys/types.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <sys/msg.h>
 #include <sys/ipc.h>
+#include <sys/sem.h>
+#include <sys/shm.h>
+#include <unistd.h>
+#include <signal.h>
 #include <time.h>
 
 struct message
@@ -17,3 +19,4 @@ struct message
 };
 
 int link_to_queue(key_t key);
+void disconnect_message_queue(int msgid);

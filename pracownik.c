@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     queue_id = link_to_queue(queue_key);
     // Obsługa sygnału
     signal(SIGTERM, signal_handler);
-    srand(time(NULL));
+    srand(time(NULL) * worker_id);
     while (running)
     {
         place_brick(worker_id);
