@@ -11,6 +11,9 @@
 #include <signal.h>
 #include <time.h>
 
+#define TRUCK_MAX_LOAD 100
+#define TRUCK_GONE_TIME 5
+
 struct message
 {
     long mtype;
@@ -19,4 +22,5 @@ struct message
 };
 
 int link_to_queue(key_t key);
-void disconnect_message_queue(int msgid);
+void place_brick(int worker_id, int mass, int queue_id);
+void get_bricks(int truck_id, int queue_id, int* current_load);
