@@ -2,25 +2,10 @@
 
 pid_t workers[3];               // Przechowuje PID pracowników
 pid_t trucks[NUMBER_OF_TRUCKS]; // Przechowuje PID ciężarówek
-int message_queue_id;           // Identyfikator kolejki komunikatów
+int message_queue_id;
+int truck_semaphore_id;
 key_t queue_key;
-char queue_key_string[16];
-
-int create_message_queue(key_t key)
-{
-    int msgid;
-
-    // Tworzenie lub otwieranie kolejki komunikatów
-    msgid = msgget(key, IPC_CREAT | 0600);
-    if (msgid == -1)
-    {
-        perror("Blad przy tworzeniu kolejki komunikatow");
-        exit(EXIT_FAILURE);
-    }
-
-    printf("Utworzono kolejke komunikatow o ID: %d\n", msgid);
-    return msgid; // Zwraca identyfikator kolejki
-}
+key_t truck_semaphore_key;
 
 void remove_message_queue(int msgid)
 {
@@ -31,10 +16,22 @@ void remove_message_queue(int msgid)
         exit(EXIT_FAILURE);
     }
 
-    printf("Kolejka komunikatów o ID %d została usunięta.\n", msgid);
+    printf("Kolejka komunikatów o ID %d zostala usunieta.\n", msgid);
 }
 
-void create_workers()
+void remove_semaphore(int semid)
+{
+    // Usunięcie semafora
+    if (semctl(semid, 0, IPC_RMID, NULL) == -1)
+    {
+        perror("Blad podczas usuwania semafora");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Semafor o ID %d zostal usuniety.\n", semid);
+}
+
+void create_workers(char *queue_key_string)
 {
     for (int i = 1; i <= 3; i++)
     {
@@ -63,7 +60,7 @@ void create_workers()
     }
 }
 
-void create_trucks()
+void create_trucks(char *queue_key_string, char *truck_semaphore_key_string)
 {
     for (int i = 1; i < NUMBER_OF_TRUCKS + 1; i++)
     {
@@ -72,7 +69,7 @@ void create_trucks()
         case 0:
         { // Kod potomka
             // Wywołanie execl w if, aby obsłużyć błąd
-            if (execl("./ciezarowka", "ciezarowka", (char[2]){i + '0', '\0'}, queue_key_string, NULL) == -1)
+            if (execl("./ciezarowka", "ciezarowka", (char[2]){i + '0', '\0'}, queue_key_string, truck_semaphore_key_string, NULL) == -1)
             {
                 perror("Blad przy wywolaniu execl");
                 exit(EXIT_FAILURE);

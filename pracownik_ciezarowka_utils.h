@@ -1,4 +1,5 @@
 #pragma ONCE
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -9,14 +10,14 @@
 #include <sys/shm.h>
 #include <unistd.h>
 #include <signal.h>
-#include <time.h>
 
-#define TRUCK_MAX_LOAD 100
-#define TRUCK_GONE_TIME 8
-#define TRUCK_LOADING_TIME 2
+#define TRUCK_MAX_LOAD 50
+#define TRUCK_GONE_TIME 10
+#define TRUCK_LOADING_TIME 3
 
-extern volatile sig_atomic_t running;
+extern int running;
 extern int queue_id;
+extern int semaphore_id;
 
 struct message
 {
@@ -25,7 +26,8 @@ struct message
     int brick_weight;
 };
 
-int link_to_queue(key_t key);
 void place_brick(int id, int mass, int type, int queue_id);
 void get_bricks(int truck_id, int queue_id, int *current_load);
 void safe_sleep(int seconds);
+void sem_wait(int semid, int val);
+void sem_signal(int semid, int val);

@@ -12,15 +12,16 @@
 
 #define CONVEYOR_MAX_NUMBER 20
 #define CONVEYOR_MAX_LOAD 30
-#define NUMBER_OF_TRUCKS 1
+#define NUMBER_OF_TRUCKS 3
 
 extern pid_t workers[3];
 extern pid_t trucks[NUMBER_OF_TRUCKS];
 extern int message_queue_id;
+extern int truck_semaphore_id;
 extern key_t queue_key;
-extern char queue_key_string[16];
+extern key_t truck_semaphore_key;
 
-int create_message_queue(key_t key);
 void remove_message_queue(int msgid);
-void create_workers();
-void create_trucks();
+void remove_semaphore(int semid);
+void create_workers(char* queue_key_string);
+void create_trucks(char* queue_key_string, char* truck_semaphore_key_string);
