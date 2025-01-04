@@ -18,7 +18,6 @@ void signal_handler(int signum)
             kill(trucks[i], SIGTERM);
         }
         while(wait(NULL) > 0);
-        printf("test\n");
         remove_message_queue(message_queue_id);
         running = 0;
     }

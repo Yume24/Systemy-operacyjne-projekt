@@ -1,7 +1,5 @@
 #include "pracownik_ciezarowka_utils.h"
 
-volatile sig_atomic_t running = 1;
-int queue_id;
 int curent_load = 0;
 
 void signal_handler(int signum)
@@ -30,8 +28,9 @@ int main(int argc, char *argv[])
     while (running)
     {
         get_bricks(truck_id, queue_id, &curent_load);
-        printf("Ciezarowka %d rozwozi cegly...", truck_id);
-        sleep(TRUCK_GONE_TIME);
+        printf("Ciezarowka %d rozwozi cegly...\n", truck_id);
+        safe_sleep(TRUCK_GONE_TIME);
+        curent_load = 0;
     }
 
     printf("Ciezarowka %d konczy prace\n", truck_id);

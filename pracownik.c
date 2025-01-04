@@ -1,8 +1,5 @@
 #include "pracownik_ciezarowka_utils.h"
 
-volatile sig_atomic_t running = 1;
-int queue_id;
-
 void signal_handler(int signum)
 {
     if (signum == SIGTERM)
@@ -28,7 +25,7 @@ int main(int argc, char *argv[])
     srand(time(NULL) * worker_id);
     while (running)
     {
-        place_brick(worker_id, worker_id, queue_id);
+        place_brick(worker_id, worker_id, 1, queue_id);
         sleep(rand() % 5 + 1);
     }
 

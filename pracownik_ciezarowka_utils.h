@@ -12,7 +12,11 @@
 #include <time.h>
 
 #define TRUCK_MAX_LOAD 100
-#define TRUCK_GONE_TIME 5
+#define TRUCK_GONE_TIME 8
+#define TRUCK_LOADING_TIME 2
+
+extern volatile sig_atomic_t running;
+extern int queue_id;
 
 struct message
 {
@@ -22,5 +26,6 @@ struct message
 };
 
 int link_to_queue(key_t key);
-void place_brick(int worker_id, int mass, int queue_id);
+void place_brick(int id, int mass, int type,int queue_id);
 void get_bricks(int truck_id, int queue_id, int* current_load);
+void safe_sleep(int seconds);
