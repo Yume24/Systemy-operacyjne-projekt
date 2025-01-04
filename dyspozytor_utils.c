@@ -1,8 +1,8 @@
 #include "dyspozytor_utils.h"
 
-pid_t workers[3];  // Przechowuje PID pracowników
+pid_t workers[3];               // Przechowuje PID pracowników
 pid_t trucks[NUMBER_OF_TRUCKS]; // Przechowuje PID ciężarówek
-int message_queue_id; // Identyfikator kolejki komunikatów
+int message_queue_id;           // Identyfikator kolejki komunikatów
 key_t queue_key;
 char queue_key_string[16];
 
@@ -40,14 +40,16 @@ void create_workers()
     {
         switch (workers[i - 1] = fork())
         {
-        case 0: { // Kod potomka
+        case 0:
+        { // Kod potomka
             // Wywołanie execl w if, aby obsłużyć błąd
             if (execl("./pracownik", "pracownik", (char[2]){i + '0', '\0'}, queue_key_string, NULL) == -1)
             {
                 perror("Blad przy wywolaniu execl");
                 exit(EXIT_FAILURE);
             }
-            break;}
+            break;
+        }
 
         case -1: // Błąd
             perror("fork error");
@@ -67,14 +69,16 @@ void create_trucks()
     {
         switch (trucks[i - 1] = fork())
         {
-        case 0: { // Kod potomka
+        case 0:
+        { // Kod potomka
             // Wywołanie execl w if, aby obsłużyć błąd
             if (execl("./ciezarowka", "ciezarowka", (char[2]){i + '0', '\0'}, queue_key_string, NULL) == -1)
             {
                 perror("Blad przy wywolaniu execl");
                 exit(EXIT_FAILURE);
             }
-            break;}
+            break;
+        }
 
         case -1: // Błąd
             perror("fork error");

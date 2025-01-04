@@ -26,6 +26,6 @@ struct message
 };
 
 int link_to_queue(key_t key);
-void place_brick(int id, int mass, int type,int queue_id);
-void get_bricks(int truck_id, int queue_id, int* current_load);
+void place_brick(int id, int mass, int type, int queue_id);
+void get_bricks(int truck_id, int queue_id, int *current_load);
 void safe_sleep(int seconds);

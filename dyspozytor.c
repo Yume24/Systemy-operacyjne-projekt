@@ -17,7 +17,8 @@ void signal_handler(int signum)
         {
             kill(trucks[i], SIGTERM);
         }
-        while(wait(NULL) > 0);
+        while (wait(NULL) > 0)
+            ;
         remove_message_queue(message_queue_id);
         running = 0;
     }
@@ -31,7 +32,7 @@ int main()
     signal(SIGUSR1, signal_handler);
     signal(SIGUSR2, signal_handler);
 
-    if ((queue_key = ftok(".", 0)) == -1) 
+    if ((queue_key = ftok(".", 0)) == -1)
     {
         perror("Blad generowania klucza");
         exit(EXIT_FAILURE);

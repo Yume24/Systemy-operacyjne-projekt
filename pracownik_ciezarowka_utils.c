@@ -23,9 +23,9 @@ void place_brick(int id, int mass, int type, int queue_id)
     struct message msg; // Struktura wiadomości
 
     // Ustawienie danych w wiadomości
-    msg.mtype = type;                     // Typ wiadomości (priorytet, np. 1)
-    msg.worker_id = id;         // ID pracownika
-    msg.brick_weight = mass;   // Masa cegły
+    msg.mtype = type;        // Typ wiadomości (priorytet, np. 1)
+    msg.worker_id = id;      // ID pracownika
+    msg.brick_weight = mass; // Masa cegły
 
     // Wysłanie wiadomości do kolejki
     if (msgsnd(queue_id, &msg, sizeof(msg) - sizeof(long), 0) == -1)
@@ -33,20 +33,23 @@ void place_brick(int id, int mass, int type, int queue_id)
         perror("Błąd wysyłania cegły do kolejki komunikatów");
         exit(EXIT_FAILURE);
     }
-    if (id > 0) {}//printf("Pracownik %d dodał cegłę o masie %d do kolejki.\n", id, mass);
-    else printf("Ciezarowka %d zwrocila cegle o masie %d do kolejki.\n", -id, mass);
+    if (id > 0)
+    {
+    } // printf("Pracownik %d dodał cegłę o masie %d do kolejki.\n", id, mass);
+    else
+        printf("Ciezarowka %d zwrocila cegle o masie %d do kolejki.\n", -id, mass);
 }
 
-void get_bricks(int truck_id, int queue_id, int* current_load)
+void get_bricks(int truck_id, int queue_id, int *current_load)
 {
     int space_available = 1;
     struct message msg;
     if (msgrcv(queue_id, &msg, sizeof(msg) - sizeof(long), 2, IPC_NOWAIT) == -1)
-        {
-            perror("Blad odbioru cegly");
-            //exit(EXIT_FAILURE);
-        }
-    else 
+    {
+        perror("Blad odbioru cegly");
+        // exit(EXIT_FAILURE);
+    }
+    else
     {
         *current_load += msg.brick_weight;
         printf("Odebrano cegle zostawiona przez ciezarowke %d o masie %d\n", -msg.worker_id, msg.brick_weight);
@@ -54,11 +57,21 @@ void get_bricks(int truck_id, int queue_id, int* current_load)
 
     while (space_available)
     {
-        // Oczekiwanie na wiadomosc z cegla
-       if (msgrcv(queue_id, &msg, sizeof(msg) - sizeof(long), 1, 0) == -1)
+        if (running == 1)
         {
-            perror("Brak zostawionych cegiel");
-            exit(EXIT_FAILURE);
+            // Oczekiwanie na wiadomosc z cegla
+            if (msgrcv(queue_id, &msg, sizeof(msg) - sizeof(long), 1, 0) == -1)
+            {
+                perror("Brak zostawionych cegiel");
+            }
+        }
+        else
+        {
+            if (msgrcv(queue_id, &msg, sizeof(msg) - sizeof(long), 1, IPC_NOWAIT) == -1)
+            {
+                perror("Brak zostawionych cegiel");
+                break;
+            }
         }
         if (*current_load + msg.brick_weight > TRUCK_MAX_LOAD)
         {
@@ -69,7 +82,7 @@ void get_bricks(int truck_id, int queue_id, int* current_load)
         else
         {
             printf("Ciezarowka %d odebrala cegle o masie: %d od pracownika %d\n",
-                truck_id, msg.brick_weight, msg.worker_id);
+                   truck_id, msg.brick_weight, msg.worker_id);
 
             // Zwiekszenie aktualnego ladunku
             *current_load += msg.brick_weight;
@@ -79,13 +92,14 @@ void get_bricks(int truck_id, int queue_id, int* current_load)
     }
 }
 
-void safe_sleep(int seconds) 
+void safe_sleep(int seconds)
 {
     struct timespec req, rem;
     req.tv_sec = seconds;
     req.tv_nsec = 0;
 
-    while (nanosleep(&req, &rem) == -1 && errno == EINTR) {
-        req = rem;  // Kontynuuje pozostały czas, jeśli został przerwany
+    while (nanosleep(&req, &rem) == -1 && errno == EINTR)
+    {
+        req = rem; // Kontynuuje pozostały czas, jeśli został przerwany
     }
 }
