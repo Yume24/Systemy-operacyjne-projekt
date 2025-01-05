@@ -18,6 +18,7 @@ void signal_handler(int signum)
         }
         for (int i = 0; i < NUMBER_OF_TRUCKS; i++)
         {
+            //printf("Wysylam SIGUSR2 do %d\n", trucks[i]);
             kill(trucks[i], SIGUSR2);
         }
         while (wait(NULL) > 0)

@@ -1,6 +1,6 @@
 #include "pracownik_ciezarowka_utils.h"
 
-int running = 1;
+volatile sig_atomic_t running = 1;
 int queue_id;
 int semaphore_id;
 
@@ -28,9 +28,10 @@ void place_brick(int id, int mass, int type, int queue_id)
 
 void get_bricks(int truck_id, int queue_id, int *current_load)
 {
+    printf("running = %d\n", running);
     int space_available = 1;
     struct message msg;
-    if (msgrcv(queue_id, &msg, sizeof(msg) - sizeof(long), 2, IPC_NOWAIT) == -1 && running == 1)
+    if (msgrcv(queue_id, &msg, sizeof(msg) - sizeof(long), 2, IPC_NOWAIT) == -1)
     {
         perror("Brak zostawionych cegiel");
         // exit(EXIT_FAILURE);
@@ -92,20 +93,40 @@ void safe_sleep(int seconds)
 
 void sem_wait(int semid, int val)
 {
-    struct sembuf sem_op = {0, -1, 0};
-    if (semop(semid, &sem_op, 1) == -1)
-    {
-        perror("Blad przy opuszczaniu semafora");
-        exit(EXIT_FAILURE);
+    struct sembuf operation = {0, -val, 0};
+    // Proba opuszczenia semafora z obsluga sygnalow
+    while (semop(semid, &operation, 1) == -1) {
+        if (errno == EINTR) { // Przerwanie przez sygnał
+            continue;         // Powtórz operację
+        } else {
+            perror("Nie mozna opuscic semafora");
+            exit(EXIT_FAILURE);
+        }
     }
 }
 
 void sem_signal(int semid, int val)
 {
-    struct sembuf sem_op = {0, 1, 0};
+    struct sembuf sem_op = {0, val, 0};
     if (semop(semid, &sem_op, 1) == -1)
     {
         perror("Blad przy podnoszeniu semafora");
+        // exit(EXIT_FAILURE);
+    }
+}
+
+void signal_handler(int signum)
+{
+    printf("odczytano sygnal %d\n", getpid());
+    running = 0;
+    //exit(0);
+}
+
+void setup_signal_handler()
+{
+    if (signal(SIGUSR2, signal_handler) == -1)
+    {
+        perror("Blad ustawiania obslugi sygnalu");
         exit(EXIT_FAILURE);
     }
 }

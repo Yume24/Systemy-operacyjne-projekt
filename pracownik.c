@@ -1,12 +1,5 @@
 #include "pracownik_ciezarowka_utils.h"
 #include "utils.h"
-void signal_handler(int signum)
-{
-    if (signum == SIGUSR2)
-    {
-        running = 0;
-    }
-}
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +11,7 @@ int main(int argc, char *argv[])
 
     int worker_id = atoi(argv[1]);
     key_t queue_key = atoi(argv[2]);
-    printf("Jestem pracownikiem %d\n", worker_id);
+    //printf("Jestem pracownikiem %d\n", worker_id);
     queue_id = create_message_queue(queue_key);
     // Obsługa sygnału
     signal(SIGUSR2, signal_handler);

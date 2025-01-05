@@ -1,4 +1,5 @@
 #pragma ONCE
+#define _XOPEN_SOURCE 700
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,9 +14,9 @@
 
 #define TRUCK_MAX_LOAD 50
 #define TRUCK_GONE_TIME 10
-#define TRUCK_LOADING_TIME 3
+#define TRUCK_LOADING_TIME 1
 
-extern int running;
+extern volatile sig_atomic_t running;
 extern int queue_id;
 extern int semaphore_id;
 
@@ -31,3 +32,5 @@ void get_bricks(int truck_id, int queue_id, int *current_load);
 void safe_sleep(int seconds);
 void sem_wait(int semid, int val);
 void sem_signal(int semid, int val);
+void signal_handler(int signum);
+void setup_signal_handler();

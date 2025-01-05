@@ -3,14 +3,6 @@
 
 int curent_load = 0;
 
-void signal_handler(int signum)
-{
-    if (signum == SIGUSR2)
-    {
-        running = 0;
-    }
-}
-
 int main(int argc, char *argv[])
 {
     if (argc < 4)
@@ -22,11 +14,11 @@ int main(int argc, char *argv[])
     int truck_id = atoi(argv[1]);
     key_t queue_key = atoi(argv[2]);
     key_t semaphore_key = atoi(argv[3]);
-    printf("Jestem ciezarowka %d\n", truck_id);
     queue_id = create_message_queue(queue_key);
     semaphore_id = create_semaphore(semaphore_key, NULL);
     // Obsługa sygnału
-    signal(SIGUSR2, signal_handler);
+    //signal(SIGUSR2, signal_handler);
+    setup_signal_handler();
 
     while (running)
     {
