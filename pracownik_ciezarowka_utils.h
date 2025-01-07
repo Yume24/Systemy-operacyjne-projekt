@@ -30,7 +30,6 @@ struct message
 void place_brick(int id, int mass, int type, int queue_id);
 void get_bricks(int truck_id, int queue_id, int *current_load, int *are_there_bricks, int *is_interrupted);
 void safe_sleep(int seconds);
-void sem_wait(int semid, int val);
-void sem_signal(int semid, int val);
+void sem_op(int semid, int val);
 void signal_handler(int signum);
 void setup_signal_handler();

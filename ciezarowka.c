@@ -40,11 +40,11 @@ int main(int argc, char *argv[])
     while (are_there_bricks)
     {
         printf("Ciezarowka %d czeka na semafor\n", truck_id);
-        sem_wait(semaphore_id, 1);
+        sem_op(semaphore_id, -1);
         printf("Ciezarowka %d przeszla przez semafor\n", truck_id);
         is_interrupted = 0;
         get_bricks(truck_id, queue_id, &current_load, &are_there_bricks, &is_interrupted);
-        sem_signal(semaphore_id, 1);
+        sem_op(semaphore_id, 1);
         if (current_load > 0)
         {
             printf("Ciezarowka %d rozwozi cegly...\n", truck_id);

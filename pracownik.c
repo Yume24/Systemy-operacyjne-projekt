@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     key_t queue_key = atoi(argv[2]);
     queue_id = create_message_queue(queue_key);
     // Obsługa sygnału
-    signal(SIGUSR2, signal_handler);
+    setup_signal_handler();
     srand(time(NULL) * worker_id);
     while (running)
     {

@@ -102,9 +102,9 @@ void safe_sleep(int seconds)
     }
 }
 
-void sem_wait(int semid, int val)
+void sem_op(int semid, int val)
 {
-    struct sembuf operation = {0, -val, 0};
+    struct sembuf operation = {0, val, 0};
     // Proba opuszczenia semafora z obsluga sygnalow
     while (semop(semid, &operation, 1) == -1)
     {
@@ -117,16 +117,6 @@ void sem_wait(int semid, int val)
             perror("Nie mozna opuscic semafora");
             exit(EXIT_FAILURE);
         }
-    }
-}
-
-void sem_signal(int semid, int val)
-{
-    struct sembuf sem_op = {0, val, 0};
-    if (semop(semid, &sem_op, 1) == -1)
-    {
-        perror("Blad przy podnoszeniu semafora");
-        // exit(EXIT_FAILURE);
     }
 }
 
