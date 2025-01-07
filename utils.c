@@ -12,7 +12,6 @@ int create_message_queue(key_t key)
         exit(EXIT_FAILURE);
     }
 
-    //printf("Utworzono kolejke komunikatow o ID: %d\n", msgid);
     return msgid; // Zwraca identyfikator kolejki
 }
 
@@ -24,7 +23,6 @@ int create_semaphore(key_t key, int init_val)
         perror("Blad przy tworzeniu semafora");
         exit(EXIT_FAILURE);
     }
-    //printf("Utworzono zbior semaforow o ID: %d\n", semid);
     // Ustawienie początkowej wartości semafora na 1
     if (init_val != NULL)
     {

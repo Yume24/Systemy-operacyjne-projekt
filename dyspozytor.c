@@ -7,7 +7,10 @@ void signal_handler(int signum)
 {
     if (signum == SIGUSR1)
     {
-        printf("Sygnal do odjazdu ciezarowki\n");
+        for (int i = 0; i < NUMBER_OF_TRUCKS; i++)
+        {
+            kill(trucks[i], SIGUSR1);
+        }
     }
     else if (signum == SIGUSR2)
     {
@@ -18,7 +21,6 @@ void signal_handler(int signum)
         }
         for (int i = 0; i < NUMBER_OF_TRUCKS; i++)
         {
-            //printf("Wysylam SIGUSR2 do %d\n", trucks[i]);
             kill(trucks[i], SIGUSR2);
         }
         while (wait(NULL) > 0)
@@ -31,7 +33,7 @@ void signal_handler(int signum)
 
 int main()
 {
-    printf("Dyspozytor PID: %d\n", getpid());
+    // printf("Dyspozytor PID: %d\n", getpid());
 
     // Obsługa sygnałów
     signal(SIGUSR1, signal_handler);

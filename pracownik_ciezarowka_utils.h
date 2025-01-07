@@ -12,9 +12,9 @@
 #include <unistd.h>
 #include <signal.h>
 
-#define TRUCK_MAX_LOAD 50
-#define TRUCK_GONE_TIME 10
-#define TRUCK_LOADING_TIME 1
+#define TRUCK_MAX_LOAD 30
+#define TRUCK_GONE_TIME 30
+#define TRUCK_LOADING_TIME 2
 
 extern volatile sig_atomic_t running;
 extern int queue_id;
@@ -28,7 +28,7 @@ struct message
 };
 
 void place_brick(int id, int mass, int type, int queue_id);
-void get_bricks(int truck_id, int queue_id, int *current_load);
+void get_bricks(int truck_id, int queue_id, int *current_load, int *are_there_bricks, int *is_interrupted);
 void safe_sleep(int seconds);
 void sem_wait(int semid, int val);
 void sem_signal(int semid, int val);
