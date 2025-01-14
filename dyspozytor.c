@@ -3,6 +3,7 @@
 
 int running = 1;
 
+// Obsluga sygnalow
 void signal_handler(int signum)
 {
     if (signum == SIGUSR1)
@@ -25,6 +26,7 @@ void signal_handler(int signum)
         }
         while (wait(NULL) > 0)
             ;
+        // Usuwanie kolejki komunikatow oraz zbiorow semaforow
         remove_message_queue(message_queue_id);
         remove_semaphore(truck_semaphore_id);
         remove_semaphore(worker_semaphore_id);
@@ -34,12 +36,11 @@ void signal_handler(int signum)
 
 int main()
 {
-    // printf("Dyspozytor PID: %d\n", getpid());
-
-    // Obsługa sygnałów
+    // Obsługa sygnaloww
     signal(SIGUSR1, signal_handler);
     signal(SIGUSR2, signal_handler);
 
+    // Generowanie kluczy
     if ((queue_key = ftok(".", 0)) == -1)
     {
         perror("Blad generowania klucza");
@@ -57,6 +58,7 @@ int main()
         exit(EXIT_FAILURE);
     }
 
+    // Tworzenie semaforow oraz kolejki komunikatow
     truck_semaphore_id = create_semaphore(truck_semaphore_key, 1, (int[]){1});
     if (truck_semaphore_id == NULL)
     {
@@ -77,11 +79,13 @@ int main()
     sprintf(queue_key_string, "%d", queue_key);
     sprintf(truck_semaphore_key_string, "%d", truck_semaphore_key);
     sprintf(worker_semaphore_key_string, "%d", worker_semaphore_key);
+
     // Tworzenie pracowników
     create_workers(queue_key_string, worker_semaphore_key_string);
+
     // Tworzenie ciężarówek
     create_trucks(queue_key_string, worker_semaphore_key_string, truck_semaphore_key_string);
-    // Oczekiwanie na sygnały
+
     while (running)
     {
         int m_value = semctl(worker_semaphore_id, 0, GETVAL);
@@ -90,7 +94,6 @@ int main()
         if (n_value == -1 || m_value == -1)
         {
             perror("Blad przy odczycie semafora");
-            //exit(EXIT_FAILURE);
         }
         printf("Liczba cegiel: %d/%d\nMasa cegiel: %d/%d\n", CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
         sleep(1);

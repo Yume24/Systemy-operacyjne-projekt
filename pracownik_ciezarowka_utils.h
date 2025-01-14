@@ -12,22 +12,23 @@
 #include <unistd.h>
 #include <signal.h>
 
-#define TRUCK_MAX_LOAD 30
-#define TRUCK_GONE_TIME 30
-#define TRUCK_LOADING_TIME 2
+#define TRUCK_MAX_LOAD 30    // Maksymalna ladownosc ciezarowki
+#define TRUCK_GONE_TIME 30   // Czas rozwozenia cegiel przez ciezarowke
+#define TRUCK_LOADING_TIME 1 // Czas potrzebny do zaladowania cegly na ciezarowke
 
 extern volatile sig_atomic_t running;
 extern int queue_id;
 extern int semaphore_id;
 
+// Struktura komunikatu dla kolejki komunikatow
 struct message
 {
-    long mtype;
-    int worker_id;
-    int brick_weight;
+    long mtype;       // Typ komunikatu (0 - normalna cegla, 1 - cegla pozostawiona)
+    int worker_id;    // ID pracownika
+    int brick_weight; // Masa cegly
 };
 
 void place_brick(int id, int mass, int type, int queue_id);
-void get_bricks(int truck_id, int queue_id, int semaphore_id,int *current_load, int *are_there_bricks, int *is_interrupted);
+void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load, int *are_there_bricks, int *is_interrupted);
 void safe_sleep(int seconds);
 void sem_op(int semid, int val[], int num_sems);

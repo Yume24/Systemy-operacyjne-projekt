@@ -1,10 +1,10 @@
 #include "utils.h"
 
+// Tworzenie lub otwieranie kolejki komunikatów
 int create_message_queue(key_t key)
 {
     int msgid;
 
-    // Tworzenie lub otwieranie kolejki komunikatów
     msgid = msgget(key, IPC_CREAT | 0600);
     if (msgid == -1)
     {
@@ -15,22 +15,28 @@ int create_message_queue(key_t key)
     return msgid; // Zwraca identyfikator kolejki
 }
 
-int create_semaphore(key_t key, int nsems, int init_val[]) {
+// Tworzenie lub otwieranie zbioru semaforow
+int create_semaphore(key_t key, int nsems, int init_val[])
+{
     int semid = semget(key, nsems, IPC_CREAT | 0600);
-    if (semid == -1) {
+    if (semid == -1)
+    {
         perror("Blad przy tworzeniu semafora");
         exit(EXIT_FAILURE);
     }
 
-    // Ustawienie wartości początkowych semaforów
-    if (init_val != NULL) {
-        for (int i = 0; i < nsems; i++) {
-            if (semctl(semid, i, SETVAL, init_val[i]) == -1) {
+    // Ustawienie wartości początkowych semaforow
+    if (init_val != NULL)
+    {
+        for (int i = 0; i < nsems; i++)
+        {
+            if (semctl(semid, i, SETVAL, init_val[i]) == -1)
+            {
                 perror("Blad przy ustawianiu semafora");
                 exit(EXIT_FAILURE);
             }
         }
     }
 
-    return semid;
+    return semid; // Zwraca identyfikator zbioru semaforow
 }

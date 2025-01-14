@@ -1,17 +1,19 @@
 #include "pracownik_ciezarowka_utils.h"
 #include "utils.h"
 
-int current_load = 0;
+int current_load = 0; // Obecny stopien zaladowania ciezarowki
 int are_there_bricks = 1;
 volatile sig_atomic_t is_interrupted = 0;
 int semaphore_id_trucks;
 
+// Obsluga sygnalu SIGUSR1 - odjazd ciezarowki
 void sigusr1_handler(int signum)
 {
     signal(SIGUSR1, sigusr1_handler);
     is_interrupted = 1;
 }
 
+// Obsluga sygnalu SIGUSR2 - koniec pracy
 void signal_handler(int signum)
 {
     running = 0;
@@ -44,17 +46,18 @@ int main(int argc, char *argv[])
     key_t queue_key = atoi(argv[2]);
     key_t semaphore_key = atoi(argv[3]);
     key_t semaphore_key_trucks = atoi(argv[4]);
+
+    // Podlaczanie sie do kolejki oraz semaforow
     queue_id = create_message_queue(queue_key);
     semaphore_id_trucks = create_semaphore(semaphore_key_trucks, 1, NULL);
     semaphore_id = create_semaphore(semaphore_key, 2, NULL);
-    // Obsługa sygnału
+
     setup_signal_handler();
 
-    while (are_there_bricks)
+    while (are_there_bricks) // Petla dziala dopoki w kolejce znajduja sie cegly
     {
-        printf("Ciezarowka %d czeka na semafor\n", truck_id);
+        // Obnizenie semafora aby tylko 1 ciezarowka na raz mogla odbierac cegly
         sem_op(semaphore_id_trucks, (int[]){-1}, 1);
-        printf("Ciezarowka %d przeszla przez semafor\n", truck_id);
         is_interrupted = 0;
         get_bricks(truck_id, queue_id, semaphore_id, &current_load, &are_there_bricks, &is_interrupted);
         sem_op(semaphore_id_trucks, (int[]){1}, 1);

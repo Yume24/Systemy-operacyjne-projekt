@@ -10,9 +10,9 @@
 #include <unistd.h>
 #include <signal.h>
 
-#define CONVEYOR_MAX_NUMBER 20
-#define CONVEYOR_MAX_LOAD 30
-#define NUMBER_OF_TRUCKS 3
+#define CONVEYOR_MAX_NUMBER 20 // Maksymalna ilosc cegiel na tasmie
+#define CONVEYOR_MAX_LOAD 30   // Maksymalny udzwig tasmy
+#define NUMBER_OF_TRUCKS 3     // Ilosc cizarowek
 
 extern pid_t workers[3];
 extern pid_t trucks[NUMBER_OF_TRUCKS];
@@ -27,4 +27,4 @@ extern key_t worker_semaphore_key;
 void remove_message_queue(int msgid);
 void remove_semaphore(int semid);
 void create_workers(char *queue_key_string, char *semaphore_key_string);
-void create_trucks(char* queue_key_string, char* semaphore_key_string, char* truck_semaphore_key_string);
+void create_trucks(char *queue_key_string, char *semaphore_key_string, char *truck_semaphore_key_string);

@@ -3,6 +3,7 @@
 
 int worker_id;
 
+// Obsluga sygnalu SIGUSR2 (zakonczenie pracy)
 void signal_handler(int signum)
 {
     running = 0;
@@ -30,14 +31,22 @@ int main(int argc, char *argv[])
     worker_id = atoi(argv[1]);
     key_t queue_key = atoi(argv[2]);
     key_t semaphore_key = atoi(argv[3]);
+
+    // Uzyskanie dostepu do kolejki komunikatow i zbioru semaforow
     queue_id = create_message_queue(queue_key);
     semaphore_id = create_semaphore(semaphore_key, 2, NULL);
-    // Obsługa sygnału
+
+    // Inicjalizacja obslugi sygnalow
     setup_signal_handler();
+
+    // Inicjalizacja generatora liczb losowych
     srand(time(NULL) * worker_id);
+
     while (running)
     {
-        sleep(rand() % 5 + 1);
+        sleep(rand() % 5 + 1); // Spij przez losowa ilosc sekund 1-5
+
+        // Sprobuj polozyc cegle na tasmie
         sem_op(semaphore_id, (int[]){-worker_id, -1}, 2);
         place_brick(worker_id, worker_id, 1, queue_id);
     }
