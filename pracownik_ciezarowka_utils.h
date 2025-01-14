@@ -16,6 +16,11 @@
 #define TRUCK_GONE_TIME 30   // Czas rozwozenia cegiel przez ciezarowke
 #define TRUCK_LOADING_TIME 1 // Czas potrzebny do zaladowania cegly na ciezarowke
 
+// Kolory do kolorowania tesktu w terminalu
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define RESET "\033[0m"
+
 extern volatile sig_atomic_t running;
 extern int queue_id;
 extern int semaphore_id;

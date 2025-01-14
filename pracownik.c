@@ -7,7 +7,7 @@ int worker_id;
 void signal_handler(int signum)
 {
     running = 0;
-    printf("Pracownik %d konczy prace\n", worker_id);
+    printf("\t\t\t\t\t\t\t\t\t\tPracownik %d konczy prace\n", worker_id);
     exit(EXIT_SUCCESS);
 }
 
@@ -51,6 +51,6 @@ int main(int argc, char *argv[])
         place_brick(worker_id, worker_id, 1, queue_id);
     }
 
-    printf("Pracownik %d konczy prace\n", worker_id);
+    printf(GREEN "\t\t\t\t\t\t\t\t\t\tPracownik %d konczy prace\n" RESET, worker_id);
     return 0;
 }

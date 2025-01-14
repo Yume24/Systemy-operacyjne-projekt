@@ -22,11 +22,11 @@ void place_brick(int id, int mass, int type, int queue_id)
     }
     if (id > 0)
     {
-        // printf("Pracownik %d dodał cegłę o masie %d do kolejki.\n", id, mass);
+        printf(GREEN "\t\t\t\t\t\t\t\t\t\tPracownik %d dodal cegle o masie %d.\n" RESET, id, mass);
     }
     else
     {
-        // printf("Ciezarowka %d zwrocila cegle o masie %d do kolejki.\n", -id, mass);
+        printf(RED "Ciezarowka %d zwrocila cegle o masie %d.\n" RESET, -id, mass);
     }
 }
 
@@ -46,9 +46,9 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
     {
         safe_sleep(TRUCK_LOADING_TIME);
         *current_load += msg.brick_weight;
-        printf("Ciezarowka %d odebrala cegle zostawiona przez ciezarowke %d o masie %d\n", truck_id, -msg.worker_id, msg.brick_weight);
+        printf(RED "Ciezarowka %d odebrala zostawiona cegle o masie %d\n" RESET, truck_id, msg.brick_weight);
     }
-    printf("Obecny ladunek %d/%d\n", *current_load, TRUCK_MAX_LOAD);
+    printf(RED "Obecny ladunek %d/%d\n" RESET, *current_load, TRUCK_MAX_LOAD);
 
     while (space_available && !(*is_interrupted))
     {
@@ -85,18 +85,18 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
         }
         else
         {
-            printf("Ciezarowka %d odebrala cegle o masie: %d od pracownika %d\n",
-                   truck_id, msg.brick_weight, msg.worker_id);
+            printf(RED "Ciezarowka %d odebrala cegle o masie %d\n" RESET,
+                   truck_id, msg.brick_weight);
 
             // Zwiekszenie aktualnego ladunku
             safe_sleep(TRUCK_LOADING_TIME);
             *current_load += msg.brick_weight;
         }
-        printf("Obecny ladunek %d/%d\n", *current_load, TRUCK_MAX_LOAD);
+        printf(RED "Obecny ladunek %d/%d\n" RESET, *current_load, TRUCK_MAX_LOAD);
     }
     if (*is_interrupted) // Na polecenie dyspozytora ciezarowka moze odjechac wczesniej
     {
-        printf("Ciezarowka %d odjazd na polecenie dyspozytora\n", truck_id);
+        printf(RESET "Ciezarowka %d odjazd na polecenie dyspozytora\n" RESET, truck_id);
         *is_interrupted = 0;
     }
 }

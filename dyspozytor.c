@@ -15,7 +15,7 @@ void signal_handler(int signum)
     }
     else if (signum == SIGUSR2)
     {
-        printf("Zatrzymywanie pracy\n");
+        printf(RESET "Zatrzymywanie pracy\n");
         for (int i = 0; i < 3; i++)
         {
             kill(workers[i], SIGUSR2);
@@ -25,7 +25,17 @@ void signal_handler(int signum)
             kill(trucks[i], SIGUSR2);
         }
         while (wait(NULL) > 0)
-            ;
+        {
+            int m_value = semctl(worker_semaphore_id, 0, GETVAL);
+            int n_value = semctl(worker_semaphore_id, 1, GETVAL);
+
+            if (n_value == -1 || m_value == -1)
+            {
+                perror("Blad przy odczycie semafora");
+            }
+            printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
+            sleep(1);
+        }
         // Usuwanie kolejki komunikatow oraz zbiorow semaforow
         remove_message_queue(message_queue_id);
         remove_semaphore(truck_semaphore_id);
@@ -95,7 +105,7 @@ int main()
         {
             perror("Blad przy odczycie semafora");
         }
-        printf("Liczba cegiel: %d/%d\nMasa cegiel: %d/%d\n", CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
+        printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
         sleep(1);
     }
 

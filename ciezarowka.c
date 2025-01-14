@@ -63,12 +63,12 @@ int main(int argc, char *argv[])
         sem_op(semaphore_id_trucks, (int[]){1}, 1);
         if (current_load > 0)
         {
-            printf("Ciezarowka %d rozwozi cegly...\n", truck_id);
+            printf(RED "Ciezarowka %d rozwozi cegly...\n" RESET, truck_id);
             safe_sleep(TRUCK_GONE_TIME);
             current_load = 0;
         }
     }
 
-    printf("Ciezarowka %d konczy prace\n", truck_id);
+    printf(RED "Ciezarowka %d konczy prace\n" RESET, truck_id);
     return 0;
 }

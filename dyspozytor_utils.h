@@ -14,6 +14,11 @@
 #define CONVEYOR_MAX_LOAD 30   // Maksymalny udzwig tasmy
 #define NUMBER_OF_TRUCKS 3     // Ilosc cizarowek
 
+// Kolory do kolorowania tekstu w terminalu
+#define BLUE "\033[94m"
+#define RESET "\033[0m"
+
+
 extern pid_t workers[3];
 extern pid_t trucks[NUMBER_OF_TRUCKS];
 extern int message_queue_id;
