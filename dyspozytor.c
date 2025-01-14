@@ -27,6 +27,7 @@ void signal_handler(int signum)
             ;
         remove_message_queue(message_queue_id);
         remove_semaphore(truck_semaphore_id);
+        remove_semaphore(worker_semaphore_id);
         running = 0;
     }
 }
@@ -50,17 +51,36 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    truck_semaphore_id = create_semaphore(truck_semaphore_key, 1);
+    if ((worker_semaphore_key = ftok(".", 2)) == -1)
+    {
+        perror("Blad generowania klucza semafora");
+        exit(EXIT_FAILURE);
+    }
+
+    truck_semaphore_id = create_semaphore(truck_semaphore_key, 1, (int[]){1});
+    if (truck_semaphore_id == NULL)
+    {
+        printf("Niepoprawne tworzenie semafora\n");
+        exit(EXIT_FAILURE);
+    }
+    worker_semaphore_id = create_semaphore(worker_semaphore_key, 2, (int[]){CONVEYOR_MAX_LOAD, CONVEYOR_MAX_NUMBER});
+    if (worker_semaphore_id == NULL)
+    {
+        printf("Niepoprawne tworzenie semafora\n");
+        exit(EXIT_FAILURE);
+    }
     message_queue_id = create_message_queue(queue_key);
 
     char queue_key_string[16];
     char truck_semaphore_key_string[16];
+    char worker_semaphore_key_string[16];
     sprintf(queue_key_string, "%d", queue_key);
     sprintf(truck_semaphore_key_string, "%d", truck_semaphore_key);
+    sprintf(worker_semaphore_key_string, "%d", worker_semaphore_key);
     // Tworzenie pracowników
-    create_workers(queue_key_string);
+    create_workers(queue_key_string, worker_semaphore_key_string);
     // Tworzenie ciężarówek
-    create_trucks(queue_key_string, truck_semaphore_key_string);
+    create_trucks(queue_key_string, worker_semaphore_key_string, truck_semaphore_key_string);
     // Oczekiwanie na sygnały
     while (running)
     {

@@ -29,7 +29,7 @@ void place_brick(int id, int mass, int type, int queue_id)
     }
 }
 
-void get_bricks(int truck_id, int queue_id, int *current_load, int *are_there_bricks, int *is_interrupted)
+void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load, int *are_there_bricks, int *is_interrupted)
 {
 
     int space_available = 1;
@@ -37,7 +37,6 @@ void get_bricks(int truck_id, int queue_id, int *current_load, int *are_there_br
     if (msgrcv(queue_id, &msg, sizeof(msg) - sizeof(long), 2, IPC_NOWAIT) == -1)
     {
         perror("Brak zostawionych cegiel");
-        // exit(EXIT_FAILURE);
     }
     else
     {
@@ -74,6 +73,7 @@ void get_bricks(int truck_id, int queue_id, int *current_load, int *are_there_br
         }
         else
         {
+            
             printf("Ciezarowka %d odebrala cegle o masie: %d od pracownika %d\n",
                    truck_id, msg.brick_weight, msg.worker_id);
 
@@ -102,11 +102,19 @@ void safe_sleep(int seconds)
     }
 }
 
-void sem_op(int semid, int val)
+void sem_op(int semid, int val[], int num_sems)
 {
-    struct sembuf operation = {0, val, 0};
+    struct sembuf operations[num_sems]; // Tablica struktur sembuf
+
+    // Inicjalizacja tablicy operations
+    for (int i = 0; i < num_sems; i++)
+    {
+        operations[i].sem_num = i;     // Numer semafora
+        operations[i].sem_op = val[i]; // Wartość operacji dla semafora
+        operations[i].sem_flg = 0;     // Flagi operacji
+    }
     // Proba opuszczenia semafora z obsluga sygnalow
-    while (semop(semid, &operation, 1) == -1)
+    while (semop(semid, operations, num_sems) == -1)
     {
         if (errno == EINTR)
         {             // Przerwanie przez sygnał
@@ -117,19 +125,5 @@ void sem_op(int semid, int val)
             perror("Nie mozna opuscic semafora");
             exit(EXIT_FAILURE);
         }
-    }
-}
-
-void signal_handler(int signum)
-{
-    running = 0;
-}
-
-void setup_signal_handler()
-{
-    if (signal(SIGUSR2, signal_handler) == -1)
-    {
-        perror("Blad ustawiania obslugi sygnalu");
-        exit(EXIT_FAILURE);
     }
 }

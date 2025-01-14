@@ -11,4 +11,4 @@
 #include <signal.h>
 
 int create_message_queue(key_t key);
-int create_semaphore(key_t key, int init_val);
+int create_semaphore(key_t key, int nsems, int init_val[]);

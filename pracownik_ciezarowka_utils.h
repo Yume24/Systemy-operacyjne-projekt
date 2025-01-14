@@ -19,6 +19,7 @@
 extern volatile sig_atomic_t running;
 extern int queue_id;
 extern int semaphore_id;
+extern int semaphore_id_trucks;
 
 struct message
 {
@@ -28,8 +29,6 @@ struct message
 };
 
 void place_brick(int id, int mass, int type, int queue_id);
-void get_bricks(int truck_id, int queue_id, int *current_load, int *are_there_bricks, int *is_interrupted);
+void get_bricks(int truck_id, int queue_id, int semaphore_id,int *current_load, int *are_there_bricks, int *is_interrupted);
 void safe_sleep(int seconds);
-void sem_op(int semid, int val);
-void signal_handler(int signum);
-void setup_signal_handler();
+void sem_op(int semid, int val[], int num_sems);
