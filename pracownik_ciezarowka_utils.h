@@ -19,7 +19,6 @@
 extern volatile sig_atomic_t running;
 extern int queue_id;
 extern int semaphore_id;
-extern int semaphore_id_trucks;
 
 struct message
 {

@@ -40,6 +40,7 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
     }
     else
     {
+        //sem_op(semaphore_id, (int[]){msg.brick_weight, 1}, 2);
         safe_sleep(TRUCK_LOADING_TIME);
         *current_load += msg.brick_weight;
         printf("Ciezarowka %d odebrala cegle zostawiona przez ciezarowke %d o masie %d\n", truck_id, -msg.worker_id, msg.brick_weight);
@@ -56,6 +57,7 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
                 if (*is_interrupted)
                     break;
             }
+            else sem_op(semaphore_id, (int[]){msg.brick_weight, 1}, 2);
         }
         else
         {
@@ -65,15 +67,17 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
                 *are_there_bricks = 0;
                 break;
             }
+            else sem_op(semaphore_id, (int[]){msg.brick_weight, 1}, 2);
         }
         if (*current_load + msg.brick_weight > TRUCK_MAX_LOAD)
         {
+
             place_brick(-truck_id, msg.brick_weight, 2, queue_id);
             space_available = 0;
         }
         else
         {
-            
+
             printf("Ciezarowka %d odebrala cegle o masie: %d od pracownika %d\n",
                    truck_id, msg.brick_weight, msg.worker_id);
 

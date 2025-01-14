@@ -84,7 +84,16 @@ int main()
     // Oczekiwanie na sygnały
     while (running)
     {
-        pause();
+        int m_value = semctl(worker_semaphore_id, 0, GETVAL);
+        int n_value = semctl(worker_semaphore_id, 1, GETVAL);
+
+        if (n_value == -1 || m_value == -1)
+        {
+            perror("Blad przy odczycie semafora");
+            //exit(EXIT_FAILURE);
+        }
+        printf("Liczba cegiel: %d/%d\nMasa cegiel: %d/%d\n", CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
+        sleep(1);
     }
 
     return 0;

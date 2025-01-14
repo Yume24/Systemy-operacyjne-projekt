@@ -40,16 +40,6 @@ int main(int argc, char *argv[])
         sleep(rand() % 5 + 1);
         sem_op(semaphore_id, (int[]){-worker_id, -1}, 2);
         place_brick(worker_id, worker_id, 1, queue_id);
-        int n_value = semctl(semaphore_id, 0, GETVAL);
-        int m_value = semctl(semaphore_id, 1, GETVAL);
-
-        if (n_value == -1 || m_value == -1)
-        {
-            perror("Blad przy odczycie semafora");
-            exit(EXIT_FAILURE);
-        }
-
-        printf("n: %d\nm: %d\n\n", n_value, m_value);
     }
 
     printf("Pracownik %d konczy prace\n", worker_id);

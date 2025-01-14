@@ -12,7 +12,7 @@
 
 #define CONVEYOR_MAX_NUMBER 20
 #define CONVEYOR_MAX_LOAD 30
-#define NUMBER_OF_TRUCKS 0
+#define NUMBER_OF_TRUCKS 3
 
 extern pid_t workers[3];
 extern pid_t trucks[NUMBER_OF_TRUCKS];
