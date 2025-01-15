@@ -106,7 +106,7 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
             safe_sleep(TRUCK_LOADING_TIME);
             *current_load += msg.brick_weight;
         }
-        if (running) sem_op_one_sem(semaphore_id, 1, 2);
+        sem_op_one_sem(semaphore_id, 1, 2);
         if (did_receive)
             printf(RED "Obecny ladunek %d/%d\n" RESET, *current_load, TRUCK_MAX_LOAD);
     }
