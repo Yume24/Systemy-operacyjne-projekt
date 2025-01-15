@@ -75,7 +75,7 @@ int main()
         printf("Niepoprawne tworzenie semafora\n");
         exit(EXIT_FAILURE);
     }
-    worker_semaphore_id = create_semaphore(worker_semaphore_key, 2, (int[]){CONVEYOR_MAX_LOAD, CONVEYOR_MAX_NUMBER});
+    worker_semaphore_id = create_semaphore(worker_semaphore_key, 3, (int[]){CONVEYOR_MAX_LOAD, CONVEYOR_MAX_NUMBER, 1});
     if (worker_semaphore_id == NULL)
     {
         printf("Niepoprawne tworzenie semafora\n");
@@ -100,12 +100,12 @@ int main()
     {
         int m_value = semctl(worker_semaphore_id, 0, GETVAL);
         int n_value = semctl(worker_semaphore_id, 1, GETVAL);
-
+        int s_value = semctl(worker_semaphore_id, 2, GETVAL);
         if (n_value == -1 || m_value == -1)
         {
             perror("Blad przy odczycie semafora");
         }
-        printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
+        printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n\t\t\t\t\t\ts: %d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD, s_value);
         sleep(1);
     }
 

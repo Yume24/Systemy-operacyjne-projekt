@@ -33,14 +33,18 @@ void place_brick(int id, int mass, int type, int queue_id)
 // Ladowanie ciezarowki
 void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load, int *are_there_bricks, int *is_interrupted)
 {
-
+    printf(RED "Ciezarowka %d podjezdza do tasmy\n" RESET, truck_id);
+    int did_receive = 1;
     int space_available = 1;
     struct message msg;
-
+    msg.brick_weight = 0;
+    msg.mtype = 0;
+    msg.worker_id = 0;
     // Sprawdzenie czy sa jakies pozostawione cegly
     if (msgrcv(queue_id, &msg, sizeof(msg) - sizeof(long), 2, IPC_NOWAIT) == -1)
     {
         perror("Brak zostawionych cegiel");
+        did_receive = 0;
     }
     else
     {
@@ -55,14 +59,18 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
         if (running == 1)
         {
             // Oczekiwanie na wiadomosc z cegla
-            if (msgrcv(queue_id, &msg, sizeof(msg) - sizeof(long), 1, 0) == -1)
+            sem_op_one_sem(semaphore_id, -1, 2);
+            if (msgrcv(queue_id, &msg, sizeof(msg) - sizeof(long), 1, IPC_NOWAIT) == -1)
             {
-                perror("Brak zostawionych cegiel");
+                did_receive = 0;
                 if (*is_interrupted)
                     break;
             }
             else
+            {
+                did_receive = 1;
                 sem_op(semaphore_id, (int[]){msg.brick_weight, 1}, 2); // Zwolnienie miejsca na tasmie
+            }
         }
         else
         {
@@ -71,10 +79,14 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
             {
                 perror("Brak zostawionych cegiel");
                 *are_there_bricks = 0;
+                did_receive = 0;
                 break;
             }
             else
+            {
                 sem_op(semaphore_id, (int[]){msg.brick_weight, 1}, 2);
+                did_receive = 1;
+            }
         }
         if (*current_load + msg.brick_weight > TRUCK_MAX_LOAD)
         {
@@ -83,7 +95,7 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
             place_brick(-truck_id, msg.brick_weight, 2, queue_id);
             space_available = 0;
         }
-        else
+        else if (did_receive)
         {
             printf(RED "Ciezarowka %d odebrala cegle o masie %d\n" RESET,
                    truck_id, msg.brick_weight);
@@ -92,7 +104,9 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
             safe_sleep(TRUCK_LOADING_TIME);
             *current_load += msg.brick_weight;
         }
-        printf(RED "Obecny ladunek %d/%d\n" RESET, *current_load, TRUCK_MAX_LOAD);
+        sem_op_one_sem(semaphore_id, 1, 2);
+        if (did_receive)
+            printf(RED "Obecny ladunek %d/%d\n" RESET, *current_load, TRUCK_MAX_LOAD);
     }
     if (*is_interrupted) // Na polecenie dyspozytora ciezarowka moze odjechac wczesniej
     {
@@ -127,8 +141,31 @@ void sem_op(int semid, int val[], int num_sems)
     // Proba opuszczenia semafora
     while (semop(semid, operations, num_sems) == -1)
     {
-        if (errno == EINTR)
-        {             // Przerwanie przez sygnal
+        if (errno == EINTR) // Przerwanie przez sygnal
+        {
+            continue; // Powtorz operację
+        }
+        else
+        {
+            perror("Nie mozna opuscic semafora");
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+void sem_op_one_sem(int semid, int val, int sem_num)
+{
+    struct sembuf operation; // Struktura sembuf
+
+    // Inicjalizacja operacji semaforowej do wykonania
+    operation.sem_flg = 0;
+    operation.sem_num = sem_num;
+    operation.sem_op = val;
+    // Proba opuszczenia semafora
+    while (semop(semid, &operation, 1) == -1)
+    {
+        if (errno == EINTR) // Przerwanie przez sygnal
+        {
             continue; // Powtorz operację
         }
         else

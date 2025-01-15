@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
     // Uzyskanie dostepu do kolejki komunikatow i zbioru semaforow
     queue_id = create_message_queue(queue_key);
-    semaphore_id = create_semaphore(semaphore_key, 2, NULL);
+    semaphore_id = create_semaphore(semaphore_key, 3, NULL);
 
     // Inicjalizacja obslugi sygnalow
     setup_signal_handler();
@@ -47,8 +47,9 @@ int main(int argc, char *argv[])
         sleep(rand() % 5 + 1); // Spij przez losowa ilosc sekund 1-5
 
         // Sprobuj polozyc cegle na tasmie
-        sem_op(semaphore_id, (int[]){-worker_id, -1}, 2);
+        sem_op(semaphore_id, (int[]){-worker_id, -1, -1}, 3);
         place_brick(worker_id, worker_id, 1, queue_id);
+        sem_op_one_sem(semaphore_id, 1, 2);
     }
 
     printf(GREEN "\t\t\t\t\t\t\t\t\t\tPracownik %d konczy prace\n" RESET, worker_id);

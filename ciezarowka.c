@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     // Podlaczanie sie do kolejki oraz semaforow
     queue_id = create_message_queue(queue_key);
     semaphore_id_trucks = create_semaphore(semaphore_key_trucks, 1, NULL);
-    semaphore_id = create_semaphore(semaphore_key, 2, NULL);
+    semaphore_id = create_semaphore(semaphore_key, 3, NULL);
 
     setup_signal_handler();
 

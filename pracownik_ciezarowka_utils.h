@@ -37,3 +37,4 @@ void place_brick(int id, int mass, int type, int queue_id);
 void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load, int *are_there_bricks, int *is_interrupted);
 void safe_sleep(int seconds);
 void sem_op(int semid, int val[], int num_sems);
+void sem_op_one_sem(int semid, int val, int sem_num);
