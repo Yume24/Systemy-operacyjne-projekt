@@ -28,12 +28,13 @@ void signal_handler(int signum)
         {
             int m_value = semctl(worker_semaphore_id, 0, GETVAL);
             int n_value = semctl(worker_semaphore_id, 1, GETVAL);
+            int s_value = semctl(worker_semaphore_id, 2, GETVAL);
 
             if (n_value == -1 || m_value == -1)
             {
                 perror("Blad przy odczycie semafora");
             }
-            printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
+            printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n\t\t\t\t\t\tOdczyt/zapis: %d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD, s_value);
             sleep(1);
         }
         // Usuwanie kolejki komunikatow oraz zbiorow semaforow
@@ -105,7 +106,7 @@ int main()
         {
             perror("Blad przy odczycie semafora");
         }
-        printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n\t\t\t\t\t\ts: %d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD, s_value);
+        printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n\t\t\t\t\t\tOdczyt/zapis: %d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD, s_value);
         sleep(1);
     }
 
