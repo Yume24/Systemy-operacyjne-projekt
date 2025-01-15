@@ -48,6 +48,7 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
     }
     else
     {
+        sem_op(semaphore_id, (int[]){msg.brick_weight, 1}, 2);
         safe_sleep(TRUCK_LOADING_TIME);
         *current_load += msg.brick_weight;
         printf(RED "Ciezarowka %d odebrala zostawiona cegle o masie %d\n" RESET, truck_id, msg.brick_weight);
@@ -93,6 +94,7 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
             // Jezeli odebrana cegla przekracza ladownosc ciezarowki, to jest zwracana z powrotem
             // i jest odbierana jako pierwsza przez nastepna ciezarowke
             place_brick(-truck_id, msg.brick_weight, 2, queue_id);
+            sem_op(semaphore_id, (int[]){-msg.brick_weight, -1}, 2);
             space_available = 0;
         }
         else if (did_receive)
