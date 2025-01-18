@@ -25,7 +25,8 @@ void signal_handler(int signum)
             kill(trucks[i], SIGUSR2);
         }
         semctl(worker_semaphore_id, 2, SETVAL, 1);
-        while (wait(NULL) > 0);
+        while (wait(NULL) > 0)
+            ;
         // Usuwanie kolejki komunikatow oraz zbiorow semaforow
         remove_message_queue(message_queue_id);
         remove_semaphore(truck_semaphore_id);
@@ -38,15 +39,18 @@ int main()
 {
     if (NUMBER_OF_TRUCKS <= 0 || NUMBER_OF_TRUCKS > 1000)
     {
-        printf("Nieprawidlowa ilosc ciezarowek!\n");
+        fprintf(stderr, "Nieprawidlowa ilosc ciezarowek!\n");
         exit(EXIT_FAILURE);
     }
 
     if (CONVEYOR_MAX_LOAD <= 0 || CONVEYOR_MAX_NUMBER <= 0 || CONVEYOR_MAX_LOAD > 10000 || CONVEYOR_MAX_LOAD > 1000)
     {
-        printf("Nieprawidlowy udzwig tasmy!\n");
+        fprintf(stderr, "Nieprawidlowy udzwig tasmy!\n");
         exit(EXIT_FAILURE);
     }
+
+    initialize_log_file(FILE_NAME_TRUCKS);
+    initialize_log_file(FILE_NAME_WORKERS);
 
     // Obsługa sygnaloww
     signal(SIGUSR1, signal_handler);
@@ -98,6 +102,9 @@ int main()
     // Tworzenie ciężarówek
     create_trucks(queue_key_string, worker_semaphore_key_string, truck_semaphore_key_string);
 
+    int old_m_value = 0;
+    int old_n_value = 0;
+
     while (running)
     {
         int m_value = semctl(worker_semaphore_id, 0, GETVAL);
@@ -106,8 +113,10 @@ int main()
         {
             perror("Blad przy odczycie semafora");
         }
-        printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
-        sleep(1);
+        if (old_m_value != m_value || old_n_value != n_value)
+            printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
+        old_m_value = m_value;
+        old_n_value = n_value;
     }
 
     return 0;

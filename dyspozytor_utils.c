@@ -90,3 +90,23 @@ void create_trucks(char *queue_key_string, char *semaphore_key_string, char *tru
         }
     }
 }
+
+void initialize_log_file(char *file_name)
+{
+    // Otwórz plik w trybie "write"
+    FILE *file = fopen(file_name, "w");
+    if (file == NULL)
+    {
+        // Obsluga bledu otwierania pliku
+        fprintf(stderr, "Blad tworzenia pliku %s: %s\n", file_name, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+
+    // Zamknij plik
+    if (fclose(file) != 0)
+    {
+        // Obsluga bledu zamykania pliku
+        fprintf(stderr, "Blad zamykania pliku %s: %s\n", file_name, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+}

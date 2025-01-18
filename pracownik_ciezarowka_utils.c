@@ -1,4 +1,5 @@
 #include "pracownik_ciezarowka_utils.h"
+#include "utils.h"
 
 volatile sig_atomic_t running = 1;
 int queue_id;
@@ -22,11 +23,14 @@ void place_brick(int id, int mass, int type, int queue_id)
     }
     if (id > 0)
     {
-        printf(GREEN "\t\t\t\t\t\t\t\t\t\tPracownik %d dodal cegle o masie %d.\n" RESET, id, mass);
+        printf(GREEN "\t\t\t\t\t\t\t\t\t\tPracownik %d dodal cegle o masie %d\n" RESET, id, mass);
+        char log[50];
+        snprintf(log, sizeof(log), "Pracownik %d dodal cegle o masie %d", id, mass);
+        write_to_file(FILE_NAME_WORKERS, log);
     }
     else
     {
-        printf(RED "Ciezarowka %d zwrocila cegle o masie %d.\n" RESET, -id, mass);
+        printf(RED "Ciezarowka %d zwrocila cegle o masie %d\n" RESET, -id, mass);
     }
 }
 
@@ -52,6 +56,9 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
         safe_sleep(TRUCK_LOADING_TIME);
         *current_load += msg.brick_weight;
         printf(RED "Ciezarowka %d odebrala zostawiona cegle o masie %d\n" RESET, truck_id, msg.brick_weight);
+        char log[50];
+        snprintf(log, sizeof(log), "Ciezarowka %d odebrala zostawiona cegle o masie %d", truck_id, msg.brick_weight);
+        write_to_file(FILE_NAME_TRUCKS, log); // Zapisywanie logu do pliku
     }
     printf(RED "Obecny ladunek %d/%d\n" RESET, *current_load, TRUCK_MAX_LOAD);
 
@@ -101,7 +108,9 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
         {
             printf(RED "Ciezarowka %d odebrala cegle o masie %d\n" RESET,
                    truck_id, msg.brick_weight);
-
+            char log[50];
+            snprintf(log, sizeof(log), "Ciezarowka %d odebrala zostawiona cegle o masie %d", truck_id, msg.brick_weight);
+            write_to_file(FILE_NAME_TRUCKS, log);
             // Zwiekszenie aktualnego ladunku
             safe_sleep(TRUCK_LOADING_TIME);
             *current_load += msg.brick_weight;
@@ -175,5 +184,34 @@ void sem_op_one_sem(int semid, int val, int sem_num)
             perror("Nie mozna opuscic semafora");
             exit(EXIT_FAILURE);
         }
+    }
+}
+
+void write_to_file(char *file_name, char *message)
+{
+    // Otwieranie pliku w trybie "append"
+    FILE *file = fopen(file_name, "a");
+    if (file == NULL)
+    {
+        // Obsługa błędów otwierania pliku
+        fprintf(stderr, "Blad otwierania pliku %s: %s\n", file_name, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+
+    // Zapisanie wiadomosci do pliku
+    if (fprintf(file, "%s\n", message) < 0)
+    {
+        // Obsługa błędów podczas zapisu do pliku
+        fprintf(stderr, "Blad zapisu do pliku %s: %s\n", file_name, strerror(errno));
+        fclose(file);
+        exit(EXIT_FAILURE);
+    }
+
+    // Zamkniecie pliku
+    if (fclose(file) != 0)
+    {
+        // Obsluga bledów zamykania pliku
+        fprintf(stderr, "Blad zamykania pliku %s: %s\n", file_name, strerror(errno));
+        exit(EXIT_FAILURE);
     }
 }

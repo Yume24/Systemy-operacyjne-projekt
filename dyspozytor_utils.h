@@ -32,3 +32,4 @@ void remove_message_queue(int msgid);
 void remove_semaphore(int semid);
 void create_workers(char *queue_key_string, char *semaphore_key_string);
 void create_trucks(char *queue_key_string, char *semaphore_key_string, char *truck_semaphore_key_string);
+void initialize_log_file(char *file_name);
