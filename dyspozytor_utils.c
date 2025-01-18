@@ -69,7 +69,9 @@ void create_trucks(char *queue_key_string, char *semaphore_key_string, char *tru
         {
         case 0: // Kod potomka
         {
-            if (execl("./ciezarowka", "ciezarowka", (char[2]){i + '0', '\0'}, queue_key_string, semaphore_key_string, truck_semaphore_key_string, NULL) == -1)
+            char truck_number[12];
+            snprintf(truck_number, sizeof(truck_number), "%d", i);
+            if (execl("./ciezarowka", "ciezarowka", truck_number, queue_key_string, semaphore_key_string, truck_semaphore_key_string, NULL) == -1)
             {
                 perror("Blad przy wywolaniu execl");
                 exit(EXIT_FAILURE);
