@@ -112,12 +112,14 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
             snprintf(log, sizeof(log), "Ciezarowka %d odebrala zostawiona cegle o masie %d", truck_id, msg.brick_weight);
             write_to_file(FILE_NAME_TRUCKS, log);
             // Zwiekszenie aktualnego ladunku
-            safe_sleep(TRUCK_LOADING_TIME);
             *current_load += msg.brick_weight;
         }
         sem_op_one_sem(semaphore_id, 1, 2);
         if (did_receive)
+        {
+            safe_sleep(TRUCK_LOADING_TIME);
             printf(RED "Obecny ladunek %d/%d\n" RESET, *current_load, TRUCK_MAX_LOAD);
+        }
     }
     if (*is_interrupted) // Na polecenie dyspozytora ciezarowka moze odjechac wczesniej
     {
