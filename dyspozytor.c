@@ -45,19 +45,23 @@ void signal_handler(int signum)
 
 int main()
 {
+    // Sprawdzanie czy liczba ciezarowek jest odpowiednia
     if (NUMBER_OF_TRUCKS <= 0 || NUMBER_OF_TRUCKS > 1000)
     {
         fprintf(stderr, "Nieprawidlowa ilosc ciezarowek!\n");
         exit(EXIT_FAILURE);
     }
 
+    // Sprawdzanie czy parametry tasmy sa odpowiednie
     if (CONVEYOR_MAX_LOAD <= 0 || CONVEYOR_MAX_NUMBER <= 0 || CONVEYOR_MAX_LOAD > 10000 || CONVEYOR_MAX_LOAD > 1000)
     {
         fprintf(stderr, "Nieprawidlowy udzwig tasmy!\n");
         exit(EXIT_FAILURE);
     }
 
-    initialize_log_file(FILE_NAME_TRUCKS);
+    setvbuf(stdout, NULL, _IONBF, 0); // Wylaczenie buforowania
+
+    initialize_log_file(FILE_NAME_TRUCKS); // Inicjalizacja plikow dla logow
     initialize_log_file(FILE_NAME_WORKERS);
 
     // Obsługa sygnaloww
