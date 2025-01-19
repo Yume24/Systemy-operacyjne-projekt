@@ -33,7 +33,7 @@ void signal_handler(int signum)
             {
                 perror("Blad przy odczycie semafora");
             }
-            printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
+            printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
         }
         // Usuwanie kolejki komunikatow oraz zbiorow semaforow
         remove_message_queue(message_queue_id);
@@ -123,7 +123,7 @@ int main()
         }
         if (old_m_value != m_value || old_n_value != n_value)
         {
-            printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
+            printf(BLUE "\t\t\t\t\t\tLiczba cegiel: %d/%d\n\t\t\t\t\t\tMasa cegiel: %d/%d\n\n" RESET, CONVEYOR_MAX_NUMBER - n_value, CONVEYOR_MAX_NUMBER, CONVEYOR_MAX_LOAD - m_value, CONVEYOR_MAX_LOAD);
         }
 
         old_m_value = m_value;

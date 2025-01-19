@@ -109,7 +109,7 @@ void get_bricks(int truck_id, int queue_id, int semaphore_id, int *current_load,
             printf(RED "Ciezarowka %d odebrala cegle o masie %d\n" RESET,
                    truck_id, msg.brick_weight);
             char log[50];
-            snprintf(log, sizeof(log), "Ciezarowka %d odebrala zostawiona cegle o masie %d", truck_id, msg.brick_weight);
+            snprintf(log, sizeof(log), "Ciezarowka %d odebrala cegle o masie %d", truck_id, msg.brick_weight);
             write_to_file(FILE_NAME_TRUCKS, log);
             // Zwiekszenie aktualnego ladunku
             *current_load += msg.brick_weight;
