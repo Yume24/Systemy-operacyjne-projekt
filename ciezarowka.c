@@ -42,6 +42,8 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
+    setvbuf(stdout, NULL, _IONBF, 0); // Wylaczenie buforowania
+
     int truck_id = atoi(argv[1]);
     key_t queue_key = atoi(argv[2]);
     key_t semaphore_key = atoi(argv[3]);
