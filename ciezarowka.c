@@ -41,6 +41,22 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Brak argumentow\n");
         exit(EXIT_FAILURE);
     }
+    
+    if (TRUCK_MAX_LOAD < 3)
+    {
+        fprintf(stderr, "Za mala pojemnosc ciezarowki\n");
+        exit(EXIT_FAILURE);
+    }
+    if (TRUCK_LOADING_TIME < 0)
+    {
+        fprintf(stderr, "Nieprawidlowy czas zaladunku\n");
+        exit(EXIT_FAILURE);
+    }
+    if (TRUCK_GONE_TIME < 3)
+    {
+        fprintf(stderr, "Nieprawidlowy czas rozwozenia cegiel\n");
+        exit(EXIT_FAILURE);
+    }
 
     setvbuf(stdout, NULL, _IONBF, 0); // Wylaczenie buforowania
 
@@ -66,7 +82,7 @@ int main(int argc, char *argv[])
         if (current_load > 0)
         {
             printf(RED "Ciezarowka %d rozwozi cegly...\n" RESET, truck_id);
-            safe_sleep(TRUCK_GONE_TIME);
+            // safe_sleep(TRUCK_GONE_TIME);
             current_load = 0;
         }
     }
