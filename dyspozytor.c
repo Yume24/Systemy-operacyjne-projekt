@@ -53,7 +53,7 @@ int main()
     }
 
     // Sprawdzanie czy parametry tasmy sa odpowiednie
-    if (CONVEYOR_MAX_LOAD <= 0 || CONVEYOR_MAX_NUMBER <= 0 || CONVEYOR_MAX_LOAD > 10000 || CONVEYOR_MAX_LOAD > 1000)
+    if (CONVEYOR_MAX_LOAD <= 0 || CONVEYOR_MAX_NUMBER <= 0 || CONVEYOR_MAX_NUMBER > 10000 || CONVEYOR_MAX_LOAD > 30000)
     {
         fprintf(stderr, "Nieprawidlowy udzwig tasmy!\n");
         exit(EXIT_FAILURE);
