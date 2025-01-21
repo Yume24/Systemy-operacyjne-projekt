@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
         if (current_load > 0)
         {
             printf(RED "Ciezarowka %d rozwozi cegly...\n" RESET, truck_id);
-            // safe_sleep(TRUCK_GONE_TIME);
+            safe_sleep(TRUCK_GONE_TIME);
             current_load = 0;
         }
     }
